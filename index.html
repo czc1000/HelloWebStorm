@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="js/myfunctions.js" type="text/javascript"></script>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+
+<div id="bugInfoDrag1" class="bugInfoDrag" style="left:40%;top:40%;"></div>
+
+<div id="bugInfoDrag2" class="bugInfoDrag delay2" style="left:60%;top:40%;"></div>
+
+<div class="circleSprite" style="left:50%;top:60%"></div>
+
+<div class="textPanel fadeInRight">这里是文字</div>
+
+<div class="borderBox"></div>
+
+<div class="colorSprite"></div>
+
+<div class="blackText">这里是黑色文字</div>
+
+<div class="divFrame">鼠标点击初始X值</div>
+
+<script type="text/javascript">
+
+    $.fn.DragElement = function() {
+        /*
+        var defaults = {aaa:'1',bbb:'2'};
+        var opts = $.extend(defaults, options);*/
+
+        var dragEntity = {
+            $dragElement:null,  //拖动元素
+            startX:0,            //鼠标点击初始X值
+            startY:0,            //鼠标点击初始Y值
+            isActive:false      //是否拖放进行中
+        }
+
+        dragEntity.$dragElement = $(this);
+        dragEntity.$dragElement.on("mousedown",function(e){
+            var offset = dragEntity.$dragElement.offset();
+            dragEntity.startX = e.pageX - offset.left; //获取元素与鼠标坐标的相对位置
+            dragEntity.startY = e.pageY - offset.top;
+            dragEntity.isActive = true;
+        });
+
+        $(document).on("mousemove",function(e){
+            if (dragEntity.isActive){
+                var toX = e.pageX - dragEntity.startX; //移动到鼠标坐标位置（- 相对位置偏移）
+                var toY = e.pageY - dragEntity.startY;
+                dragEntity.$dragElement.css({"left":toX + "px","top":toY + "px"});
+                //console.log("toX:" + toX + "; toY:" + toY + "; startX:" + dragEntity.startX + "; startY:" + dragEntity.startY);
+            }
+        });
+
+        $(document).on("mouseup",function(e){
+            dragEntity.isActive = false;
+        });
+
+    };
+
+    $("#bugInfoDrag1").DragElement();
+    $("#bugInfoDrag2").DragElement();
+
+    //拖放实体
+
+
+
+
+    //alert(ComAB(2,1));
+
+</script>
+
+
+
+
+
+
+
+</body>
+</html>

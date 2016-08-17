@@ -1,0 +1,202 @@
+/* 中文 utf-8 */
+/* 颜色定义 */
+/* 基本定义 */
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+/* 基本函数 */
+body {
+  margin: 0;
+  padding: 0;
+}
+.bugInfoDrag {
+  height: 50px;
+  width: 50px;
+  background: #f0f0f0;
+  cursor: move;
+  position: absolute;
+}
+.bugInfoDrag:before {
+  content: "";
+  position: relative;
+  display: block;
+  border-radius: 100%;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  background-color: #10ca00;
+  left: -10px;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  animation: keyBidHover 1.2s linear infinite;
+}
+.delay2:before {
+  animation-delay: 0.6s;
+}
+@keyframes keyBidHover {
+  0% {
+    left: -10px;
+    top: -10px;
+  }
+  25% {
+    left: 50px;
+    top: -10px;
+  }
+  50% {
+    left: 50px;
+    top: 50px;
+  }
+  75% {
+    left: -10px;
+    top: 50px;
+  }
+}
+#header {
+  color: #6c94be;
+}
+/* 圆圆元素 */
+.circleSprite {
+  background-color: #f0f0f3;
+  border-radius: 100%;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+}
+.circleSprite:before,
+.circleSprite:after {
+  content: "";
+  display: block;
+  border-radius: 100%;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  background-color: #f00;
+  width: 10px;
+  height: 10px;
+  transform-origin: 25px 25px;
+  animation: keyCircleSprite 1s infinite linear;
+  position: absolute;
+}
+.circleSprite:after {
+  animation-delay: 0.5s;
+}
+@keyframes keyCircleSprite {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+/* 自动匹配背景色 */
+.textPanel {
+  background-color: black;
+  color: #f0f0f0;
+}
+/* 边框盒子 */
+.borderBox {
+  border: 1px solid #00f;
+  border-width: 8px 16px 24px 4px;
+  width: 100px;
+  height: 100px;
+}
+/* 颜色盒子 */
+.colorSprite {
+  background-color: #71abea;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+}
+.blackText {
+  color: #0f0;
+  font-weight: bold;
+  font-size: 14px;
+}
+.divFrame {
+  background-color: #f00;
+}
+.fadeInRight {
+  -webkit-animation: fadeInRight .5s;
+  animation: fadeInRight .5s;
+}
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateX(140px);
+    -ms-transform: translateX(140px);
+    transform: translateX(140px);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+/* 翻转的方块 */
+.cute {
+  width: 50px;
+  height: 50px;
+  background-color: #71abea;
+  animation: keyCute 1s infinite linear;
+  /*animation-origin:100px 100pxmargin-left:200px;margin-top:100px*/
+}
+@keyframes keyCute {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+/* 左右拖动的方块 */
+.nav-list {
+  overflow: hidden;
+  height: 50px;
+}
+.nav-list ul {
+  width: 800px;
+  padding: 0;
+  margin: 0;
+}
+.nav-list li {
+  width: 100px;
+  height: 50px;
+  float: left;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.nav-list li:nth-child(0) {
+  background-color: #ff0000;
+}
+.nav-list li:nth-child(1) {
+  background-color: #ff00f0;
+}
+.nav-list li:nth-child(2) {
+  background-color: #f0c0f0;
+}
+.nav-list li:nth-child(3) {
+  background-color: #0cc0f0;
+}
+.nav-list li:nth-child(4) {
+  background-color: #0c30f6;
+}
+.nav-list li:nth-child(5) {
+  background-color: #3c0006;
+}
+.nav-list li:nth-child(5) {
+  background-color: #24f082;
+}
+.nav-list li:nth-child(6) {
+  background-color: #9982f0;
+}
+.nav-list li:nth-child(7) {
+  background-color: #aac580;
+}

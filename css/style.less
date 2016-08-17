@@ -1,0 +1,101 @@
+/* 中文 utf-8 */
+
+/* 颜色定义 */
+@nice-blue: #5B83AD;
+@light-blue: @nice-blue + #111;
+@gray: #f0f0f0;
+@green: #10ca00;
+
+/* 基本定义 */
+.relative {position:relative;}
+.absolute {position:absolute;}
+
+/* 基本函数 */
+.border-radius(@radius:5px){
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+}
+
+
+body{margin:0;padding:0;}
+.bugInfoDrag {
+  height:50px;width:50px;background:@gray;cursor:move;.absolute;
+  &:before {content:"";.relative;display:block;
+    .border-radius(@radius:100%);background-color:@green;left:-10px;top:-10px;width:10px;height:10px;animation:keyBidHover 1.2s linear infinite;}
+}
+
+.delay2:before {animation-delay: 0.6s}
+
+@keyframes keyBidHover {
+  0% {left:-10px;top:-10px}
+  25% {left:50px;top:-10px}
+  50% {left:50px;top:50px}
+  75% {left:-10px;top:50px}
+}
+
+#header {
+color: @light-blue;
+}
+
+/* 圆圆元素 */
+@circleSpriteSize:50px;
+@circleSpriteColor:#f0f0f3;
+@circleSpriteBallColor:#f00;
+@circleSpriteBallSize:10px;
+.circleSprite {background-color:@circleSpriteColor;.border-radius(100%);.absolute;width:@circleSpriteSize;height:@circleSpriteSize;
+  &:before,
+  &:after {content:"";display:block;.border-radius(100%);background-color:@circleSpriteBallColor;width:@circleSpriteBallSize;height:@circleSpriteBallSize;transform-origin:25px 25px;animation:keyCircleSprite 1s infinite linear;.absolute;
+  }
+  &:after {animation-delay:0.5s}
+}
+
+@keyframes keyCircleSprite {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(359deg);}
+}
+
+
+/* 自动匹配背景色 */
+.mixin (@a) when (lightness(@a) >= 50%) {
+  background-color: black;
+}
+.mixin (@a) when (lightness(@a) < 50%) {
+  background-color: white;
+}
+.mixin (@a) {
+  color: @a;
+}
+
+.textPanel {
+  .mixin(#f0f0f0);
+}
+
+/* 边框盒子 */
+@borderBoxBaseWidth:4px;
+@borderBoxLeftWidth:@borderBoxBaseWidth;
+@borderBoxTopWidth:@borderBoxBaseWidth * 2;
+@borderBoxRightWidth:@borderBoxBaseWidth * 4;
+@borderBoxBottomWidth:@borderBoxBaseWidth * 6;
+
+@borderBoxBorderColor:#00f;
+@borderBoxSize:100px;
+
+.borderBox {border:1px solid @borderBoxBorderColor;border-width:@borderBoxTopWidth @borderBoxRightWidth @borderBoxBottomWidth @borderBoxLeftWidth;width:@borderBoxSize;height:@borderBoxSize}
+
+/* 颜色盒子 */
+@colorSpriteBaseColor: #1f77d6;
+@colorSpriteColor2:lighten(@colorSpriteBaseColor,20%);
+@colorSpriteSize:30px;
+
+.colorSprite {background-color:@colorSpriteColor2;width:@colorSpriteSize;height:@colorSpriteSize;.border-radius(100%)}
+
+@import "lib.less";
+@import "cute.less";
+@import "navlist.less";
+
+
+
+
+
+
