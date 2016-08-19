@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>拖动演示</title>
+    <style type="text/css">
+        body,ul,li,table,td,div,dl,dd,dt,span,em {list-style:none;padding:0;margin:0}
+        .draglist {width:300px}
+        .draglist ul li {border:1px solid #ddd;height:35px;line-height:35px;text-align:center;cursor:move;margin-bottom:-1px;background-color:#fff}
+        .draglist ul li:hover {border-color:#f00;position:relative}
+    </style>
+</head>
+<body>
+
+
+<div style="margin:10px">
+    <div class="draglist">
+        <ul>
+            <li><a href="javascript:">左侧列表项一</a></li>
+            <li><a href="javascript:">左侧列表项二</a></li>
+            <li><a href="javascript:">左侧列表项三</a></li>
+            <li><a href="javascript:">左侧列表项四</a></li>
+        </ul>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $.fn.DragElement = function() {
+        /*
+         var defaults = {aaa:'1',bbb:'2'};
+         var opts = $.extend(defaults, options);*/
+
+        var dragEntity = {
+            $dragElement:null,  //拖动元素
+            startX:0,            //鼠标点击初始X值
+            startY:0,            //鼠标点击初始Y值
+            offsetX:0,            //鼠标坐标与元素的偏移
+            offsetY:0,            //鼠标坐标与元素的偏移
+            isActive:false      //是否拖放进行中
+        }
+
+        dragEntity.$dragElement = $(this);
+        dragEntity.$dragElement.on("mousedown",function(e){
+            var offset = dragEntity.$dragElement.offset();
+            dragEntity.offsetX = dragEntity.$dragElement.css("transform");//offset.left;// - offset.left; //获取元素与鼠标坐标的相对位置
+            dragEntity.offsetY = dragEntity.$dragElement.css("transform");// = offset.left;// - offset.left; //获取元素与鼠标坐标的相对位置
+
+            dragEntity.startX = e.pageX;// - dragEntity.offsetX; //获取元素与鼠标坐标的相对位置
+            dragEntity.startY = e.pageY;// - dragEntity.offsetY;
+            dragEntity.isActive = true;
+            console.log("dragEntity.offsetX:" + dragEntity.offsetX + "; dragEntity.offsetY:" + dragEntity.offsetY + "; e.pageX:" + e.pageX + "; e.pageY:" + e.pageY);
+        });
+
+        $(document).on("mousemove",function(e){
+            if (dragEntity.isActive){
+                var toX = e.pageX - dragEntity.startX + dragEntity.offsetX; //移动到鼠标坐标位置（- 相对位置偏移）
+                var toY = e.pageY - dragEntity.startY + dragEntity.offsetY;
+
+                //dragEntity.$dragElement.css({"left":toX + "px","top":toY + "px"});
+                dragEntity.$dragElement.css({"transform":"translateX(" + toX + "px) translateY(" + toY + "px)"});
+                console.log("dragEntity.offsetX:" + dragEntity.offsetX + "; dragEntity.offsetY:" + dragEntity.offsetY + "; e.pageX:" + e.pageX + "; e.pageY:" + e.pageY + "; toX:" + toX + "; toY:" + toY + "; startX:" + dragEntity.startX + "; startY:" + dragEntity.startY);
+            }
+        });
+
+        $(document).on("mouseup",function(e){
+            dragEntity.isActive = false;
+        });
+
+    };
+
+    $(".draglist li").each(function(){
+        $(this).DragElement();
+    });
+
+    //拖放实体
+
+
+</script>
+
+
+
+
+</body>
+</html>

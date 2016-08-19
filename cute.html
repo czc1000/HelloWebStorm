@@ -64,7 +64,11 @@
             element: null,
             startX:0,
             startY:0,
-            isActive:false
+            isActive:false,
+            lastMoveTime:0,
+            lastMoveStartX:0,
+            lastMoveStartY:0,
+            stopInertiaMove:false
         }
         listEntity.$element = $("#navlist");
         listEntity.$element.on("touchstart",function(e){
@@ -83,11 +87,77 @@
                 listEntity.$element.css({"margin-left":toX + "px"});
                 //console.log("x:" + toX + ";y:" + toY);
                 //console.log(.pageX);
+
+                var nowTime = e.timeStamp || Date.now();
+                listEntity.stopInertiaMove = true;
+                if(nowTime - listEntity.lastMoveTime > 300) {
+                    listEntity.lastMoveTime = nowTime;
+                    listEntity.lastMoveStartX = touches.pageX;
+                    listEntity.lastMoveStartY = touches.pageY;
+                }
             }
             return false;
         });
         $(document).on("touchend",function(e){
+            if (listEntity.isActive){return}
             listEntity.isActive = false;
+
+            var touches = e.originalEvent.changedTouches[0];
+            console.log(e);
+            var nowX = touches.clientX;
+            var nowY = touches.clientY;
+            var nowTime = e.timeStamp || Date.now();
+
+
+            var v = (nowX - listEntity.lastMoveStartX) / (nowTime - listEntity.lastMoveTime); //最后一段时间手指划动速度
+            var nowTime = e.timeStamp || Date.now();
+
+
+            (function(v, startTime, contentX) {
+                var dir = v > 0 ? -1 : 1; //加速度方向
+                var toX = contentX + (v * 200);
+                function inertiaMove() {
+                    var thisX = parseInt(listEntity.$element.css("margin-left"));
+                    var dx = (toX - thisX) * 0.1;
+                    var tx = thisX + dx;
+                    console.log("toX:" + toX + "; thisX:" + thisX);
+                    listEntity.$element.css({"margin-left":tx + "px"});
+                    if (Math.abs(toX - tx) < 10){
+                        listEntity.$element.css({"margin-left":toX + "px"});
+                    }else{
+                        if (tx > 0){
+                            listEntity.$element.css({"margin-left":"0px"});
+                        }else if (tx < -listEntity.$element.width()){
+                            listEntity.$element.css({"margin-left": - listEntity.$element.width() +"px"});
+                        }else{
+                            setTimeout(inertiaMove, 10);
+                        }
+                    }
+                }
+                inertiaMove();
+            })(v, nowTime, parseInt(listEntity.$element.css("margin-left")));
+            /*
+            (function(v, startTime, contentX) {
+                var dir = v > 0 ? -1 : 1; //加速度方向
+                var deceleration = dir*0.0006;
+                var duration = v / deceleration; // 速度消减至0所需时间
+                var dist = v * duration / 2; //最终移动多少
+                function inertiaMove() {
+                    if(listEntity.stopInertiaMove) return;
+                    var nowTime = e.timeStamp || Date.now();
+                    var t = nowTime-startTime;
+                    var nowV = v + t*deceleration;
+                    // 速度方向变化表示速度达到0了
+                    if(dir*nowV < 0) {
+                        return;
+                    }
+                    var moveX = (v + nowX)/2 * t;
+                    listEntity.$element.css({"margin-left":moveX + "px"});
+                    setTimeout(inertiaMove, 10);
+                }
+                inertiaMove();
+            })(v, nowTime, nowX);*/
+
         });
         listEntity.$element.on("touchend",function(e){
             listEntity.isActive = false;
