@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>拖动演示</title>
+    <script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
     <style type="text/css">
         body,ul,li,table,td,div,dl,dd,dt,span,em {list-style:none;padding:0;margin:0}
         .draglist {width:300px}
-        .draglist ul li {border:1px solid #ddd;height:35px;line-height:35px;text-align:center;cursor:move;margin-bottom:-1px;background-color:#fff}
-        .draglist ul li:hover {border-color:#f00;position:relative}
+        .draglist ul li {border:1px solid #ddd;height:35px;line-height:35px;text-align:center;cursor:move;margin-bottom:-1px;background-color:#fff;width:300px}
+        .draglist ul li:hover {border-color:#f00;position:relative;z-index:99}
     </style>
 </head>
 <body>
@@ -15,6 +16,7 @@
 
 <div style="margin:10px">
     <div class="draglist">
+        <h2>拖动LI排序</h2>
         <ul>
             <li><a href="javascript:">左侧列表项一</a></li>
             <li><a href="javascript:">左侧列表项二</a></li>
@@ -27,51 +29,91 @@
 
 <script type="text/javascript">
 
-    $.fn.DragElement = function() {
-        /*
-         var defaults = {aaa:'1',bbb:'2'};
-         var opts = $.extend(defaults, options);*/
+    $.fn.DragElement = function(options) {
 
         var dragEntity = {
-            $dragElement:null,  //拖动元素
+            $dragElement:null,   //拖动元素
+            $dropElements:null,  //放下元素的DIV集合
+            direction:"vertical",      //元素排列方向 [vertical:垂直, 其它值:水平]
             startX:0,            //鼠标点击初始X值
             startY:0,            //鼠标点击初始Y值
-            offsetX:0,            //鼠标坐标与元素的偏移
-            offsetY:0,            //鼠标坐标与元素的偏移
-            isActive:false      //是否拖放进行中
+            offsetX:0,           //鼠标坐标与元素的偏移
+            offsetY:0,           //鼠标坐标与元素的偏移
+            isActive:false,      //是否拖放进行中
+            $blankElement:false  //元素的占位副本
         }
+
+        dragEntity = $.extend(dragEntity, options);
 
         dragEntity.$dragElement = $(this);
         dragEntity.$dragElement.on("mousedown",function(e){
-            var offset = dragEntity.$dragElement.offset();
-            dragEntity.offsetX = dragEntity.$dragElement.css("transform");//offset.left;// - offset.left; //获取元素与鼠标坐标的相对位置
-            dragEntity.offsetY = dragEntity.$dragElement.css("transform");// = offset.left;// - offset.left; //获取元素与鼠标坐标的相对位置
 
-            dragEntity.startX = e.pageX;// - dragEntity.offsetX; //获取元素与鼠标坐标的相对位置
-            dragEntity.startY = e.pageY;// - dragEntity.offsetY;
+            //复制占位副本
+            dragEntity.$blankElement = dragEntity.$dragElement.clone();
+            dragEntity.$blankElement.css({"visibility":"hidden"});
+            dragEntity.$dragElement.after(dragEntity.$blankElement);
+
+            var offset = dragEntity.$dragElement.offset();
+            dragEntity.offsetX = offset.left;//dragEntity.$dragElement.css("transform");//// - offset.left; //获取元素与鼠标坐标的相对位置
+            dragEntity.offsetY = offset.top;//dragEntity.$dragElement.css("transform");//// - offset.left; //获取元素与鼠标坐标的相对位置
+
+            dragEntity.startX = e.pageX - dragEntity.offsetX; //获取元素与鼠标坐标的相对位置
+            dragEntity.startY = e.pageY - dragEntity.offsetY;
             dragEntity.isActive = true;
             console.log("dragEntity.offsetX:" + dragEntity.offsetX + "; dragEntity.offsetY:" + dragEntity.offsetY + "; e.pageX:" + e.pageX + "; e.pageY:" + e.pageY);
+            dragEntity.$dragElement.css("position","absolute");
+
+
+
+
+            event.preventDefault();
         });
 
         $(document).on("mousemove",function(e){
             if (dragEntity.isActive){
-                var toX = e.pageX - dragEntity.startX + dragEntity.offsetX; //移动到鼠标坐标位置（- 相对位置偏移）
-                var toY = e.pageY - dragEntity.startY + dragEntity.offsetY;
+                var toX = e.pageX - dragEntity.startX;// + dragEntity.offsetX; //移动到鼠标坐标位置（- 相对位置偏移）
+                var toY = e.pageY - dragEntity.startY;// + dragEntity.offsetY;
 
-                //dragEntity.$dragElement.css({"left":toX + "px","top":toY + "px"});
-                dragEntity.$dragElement.css({"transform":"translateX(" + toX + "px) translateY(" + toY + "px)"});
+                dragEntity.$dragElement.css({"left":toX + "px","top":toY + "px"});
+
+                //获取移动对象的 RECT (x1,y1,x2,y2)
+                var offset = dragEntity.$dragElement.offset();
+                var RECT = {
+                    x1:offset.left,
+                    y1:offset.top,
+                    x2:offset.left + dragEntity.$dragElement.width(),
+                    y2:offset.top + dragEntity.$dragElement.height()
+                }
+
+                //循环判断是否相交
+                if ("vertical" == dragEntity.direction){
+                    //垂直
+                    dragEntity.$dropElements.each(function(i){
+
+                    })
+
+                }
+
+
+
                 console.log("dragEntity.offsetX:" + dragEntity.offsetX + "; dragEntity.offsetY:" + dragEntity.offsetY + "; e.pageX:" + e.pageX + "; e.pageY:" + e.pageY + "; toX:" + toX + "; toY:" + toY + "; startX:" + dragEntity.startX + "; startY:" + dragEntity.startY);
+
             }
         });
 
         $(document).on("mouseup",function(e){
             dragEntity.isActive = false;
+            dragEntity.$dragElement.css("position","static");
         });
 
     };
 
+    var dragListLis = $(".draglist li");    //放下接收的 li 元素
+    var dragListOpt = {
+        $dropElements:dragListLis
+    }
     $(".draglist li").each(function(){
-        $(this).DragElement();
+        $(this).DragElement(dragListOpt);
     });
 
     //拖放实体
