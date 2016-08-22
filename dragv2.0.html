@@ -16,9 +16,11 @@
 
 
 <div style="margin:10px">
+    <input id="inputItemName" type="text" placeholder="请输入项名称" />
+    <button onclick="AddItem_OnClick()">添加一个项</button>
     <div class="draglist">
         <h2>拖动LI排序</h2>
-        <ul class="startdraglist">
+        <ul id="ulDragList" class="ul-draglist">
             <li><a href="javascript:">左侧列表项一</a></li>
             <li><a href="javascript:">左侧列表项二</a></li>
             <li><a href="javascript:">左侧列表项三</a></li>
@@ -33,6 +35,8 @@
     $.fn.DragElement = function(options) {
 
         var dragEntity = {
+            selector:"li",       //拖放元素选择器，一般默认li即可
+            $dragList:null,      //拖动元素外层DIV
             $dragElement:null,   //拖动元素
             $dropElements:null,  //放下元素的DIV集合
             direction:"vertical",      //元素排列方向 [vertical:垂直, 其它值:水平]
@@ -47,8 +51,10 @@
 
         dragEntity = $.extend(dragEntity, options);
 
-        dragEntity.$dragElement = $(this);
-        dragEntity.$dragElement.on("mousedown",function(e){
+        dragEntity.$dragList.on("mousedown", dragEntity.selector, function(e){
+
+            dragEntity.$dragElement = $(this);  //当前欲拖动的元素
+            dragEntity.$dropElements = dragEntity.$dragList.find(dragEntity.selector);  //当前组所有能拖动的元素
 
             //复制占位副本
             dragEntity.$blankElement = dragEntity.$dragElement.clone();
@@ -188,15 +194,20 @@
 
     };
 
-    var dragListLis = $(".startdraglist li");    //放下接收的 li 元素
+    var dragList = $(".ul-draglist");    //放下接收的 li 元素的 DIV
     var dragListOpt = {
-        $dropElements:dragListLis
+        $dragList:dragList
     }
-    dragListLis.each(function(){
-        $(this).DragElement(dragListOpt);
-    });
+    $(this).DragElement(dragListOpt);
 
-    //拖放实体
+    var itemNumber = 0;
+    function AddItem_OnClick(){
+        var itemName = $("#inputItemName").val();
+        if (!itemName){
+            itemName = "项目列表" + itemNumber++;
+        }
+        $("#ulDragList").append('<li><a href="javascript:">' + itemName + '</a></li>');
+    }
 
 
 </script>

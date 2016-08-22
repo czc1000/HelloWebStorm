@@ -200,3 +200,6 @@ body {
 .nav-list li:nth-child(7) {
   background-color: #aac580;
 }
+.blank-element {
+  opacity: 0.5;
+}
