@@ -48,6 +48,62 @@
         dragEntity = $.extend(dragEntity, options);
 
         dragEntity.$dragElement = $(this);
+
+        /*
+        * 方法名称：isRECTIntersect
+        * 实现功能：判断两个矩形是否相交
+        * 参数说明：
+        *          rect1:要比较的第一组 RECT ,  格式：
+        *          {
+        *             x1,  //第一点坐标X
+        *             y2,  //第一点坐标Y
+        *             x2,  //第二点坐标X
+        *             x2,  //第二点坐标Y
+        *          };
+        *
+        *          * 约定，x2 > x1 且 y2 > y1
+        *
+        *          rect2:要比较的第二组 RECT , 格式与 rect1 相同;
+        *          direction: [vertical:只判断垂直，元素每行一个的情况, 其它值：正常判断]
+        *
+        *
+        *
+        *
+        */
+        function isRECTIntersect(rect1,rect2,direction){
+            if ("vertical" == direction){
+                //垂直
+                var height1 = rect1.y2-rect1.y1; //drop 对象高度
+                var height2 = rect2.y2-rect1.y1; //drag 对象高度
+                //判断是否相交 (仅判断Y部分)
+                if (height1 > height2){
+                    //drop 高度大于 drag
+                    if (rect1.y1 <= rect2.y1 && rect1.y2 >= rect2.y2){
+                        return true;
+                    }
+                }else if (height1 < height2){
+                    //drop 高度小于 drag
+                    if (rect1.y1 >= rect2.y1 && rect1.y2 <= rect2.y2){
+                        return true;
+                    }
+                }else if ((rect1.y1 >= rect2.y1 && rect1.y1 <= rect2.y2) ||
+                        (rect1.y2 >= rect2.y1 && rect1.y2 <= rect2.y2)
+                ){
+                    //如果
+                    return true;
+                }else if ((rect1.y1 >= rect2.y1 && rect1.y1 <= rect2.y2) ||
+                        (rect1.y2 >= rect2.y1 && rect1.y2 <= rect2.y2)
+                ){
+                    //高度相等情况判断
+                    return true;
+                }
+            }else{
+
+            }
+        }
+
+
+
         dragEntity.$dragElement.on("mousedown",function(e){
 
             //复制占位副本
@@ -109,6 +165,10 @@
                                 minTop = dropRECT.y1;
                             }
 
+                            //加偏移
+                            dropRECT.y1 += parseInt($this.height() / 2);
+                            dropRECT.y2 += parseInt($this.height() / 2);
+
                             if (dropRECT.x1 == RECT.x1 &&
                                 dropRECT.x2 == RECT.x2 &&
                                 dropRECT.y1 == RECT.y1 &&
@@ -122,33 +182,30 @@
                                     //drop 高度大于 drag
                                     if (dropRECT.y1 <= RECT.y1 && dropRECT.y2 >= RECT.y2){
                                         $currentDropElement = $this;
-                                        //console.log(1 + ";" + i);
                                     }
                                 }else if (dropHeight < dragHeight){
                                     //drop 高度小于 drag
                                     if (dropRECT.y1 >= RECT.y1 && dropRECT.y2 <= RECT.y2){
                                         $currentDropElement = $this;
-                                        //console.log(2 + ";" + i);
                                     }
                                 }else if ((dropRECT.y1 >= RECT.y1 && dropRECT.y1 <= RECT.y2) ||
                                         (dropRECT.y2 >= RECT.y1 && dropRECT.y2 <= RECT.y2)
                                 ){
                                     //如果
                                     $currentDropElement = $this;
-                                    //console.log("dropRECT.y1:" + dropRECT.y1 + "; dropRECT.y2:" + dropRECT.y2 + "; RECT.y1:" + RECT.y1 + "; RECT.y2:" + RECT.y2);
-                                    //console.log(3 + ";" + i);
                                 }else if ((dropRECT.y1 >= RECT.y1 && dropRECT.y1 <= RECT.y2) ||
                                         (dropRECT.y2 >= RECT.y1 && dropRECT.y2 <= RECT.y2)
                                 ){
                                     //高度相等情况判断
                                     $currentDropElement = $this;
-                                    //console.log("dropRECT.y1:" + dropRECT.y1 + "; dropRECT.y2:" + dropRECT.y2 + "; RECT.y1:" + RECT.y1 + "; RECT.y2:" + RECT.y2);
-                                    //console.log(3 + ";" + i);
                                 }
                             }
                         }
                     })
+                }else{
+                    //水平
                 }
+
 
                 console.log(RECT.y2 + ";" + minTop);
                 if (null == $currentDropElement){

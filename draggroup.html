@@ -6,9 +6,11 @@
     <script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
     <style type="text/css">
         body,ul,li,table,td,div,dl,dd,dt,span,em {list-style:none;padding:0;margin:0}
-        .draglist {width:300px}
-        .draglist ul li {border:1px solid #ddd;height:35px;line-height:35px;text-align:center;cursor:move;margin-bottom:-1px;background-color:#fff;width:300px}
-        .draglist ul li:hover {border-color:#f00;position:relative;z-index:99}
+        .draglist {width:200px}
+        .draglist ul li {border:1px solid #ddd;text-align:center;margin:-1px -1px 0 -1px;background-color:#fff;width:200px;padding:10px 0;line-height:35px}
+        /*.draglist ul li:hover {border-color:#f00;position:relative;z-index:99}*/
+        .draglist ul li .handle {float:left;width:10px;height:35px;margin:-11px 0 0 -11px;background-color:#f0f0f3;cursor:move;}
+        .draglist ul li .handle:hover {background-color:#e0e0e3}
         .blank-element {opacity:0.2}
         .wlist {width:auto;}
         .wlist li {float:left;width:auto;margin:2px;}
@@ -18,35 +20,64 @@
 
 
 <div style="margin:10px">
+    <h2>从一边拖到另一边 大件物体</h2>
     <input id="inputItemName" type="text" placeholder="请输入项名称" />
     <button onclick="AddItem_OnClick()">添加一个项</button>
-    <div class="draglist">
-        <h2>拖动LI排序</h2>
-        <ul id="ulDragList" class="ul-draglist">
-            <li><a href="javascript:">左侧列表项一</a></li>
-            <li><a href="javascript:">左侧列表项二</a></li>
-            <li><a href="javascript:">左侧列表项三</a></li>
-            <li><a href="javascript:">左侧列表项四</a></li>
-        </ul>
+    <div style="clear:both;margin-bottom:10px"></div>
+    <div style="width:400px;float:left">
+        <div class="draglist" style="border:1px solid #ddd;">
+            <ul id="#ulDragList" class="ul-draglist" style="min-height:300px">
+                <li><span class="handle"></span>
+                    <dl>
+                        <dd><a href="javascript:">孙悟空</a></dd>
+                        <dd><a href="javascript:">唐三藏</a></dd>
+                    </dl>
+                </li>
+                <li><span class="handle"></span>
+                    <dl>
+                        <dd><a href="javascript:">沙悟净</a></dd>
+                        <dd><a href="javascript:">猪八戒</a></dd>
+                    </dl>
+                </li>
+                <li><span class="handle"></span>
+                    <dl>
+                        <dd><a href="javascript:">刘备</a></dd>
+                        <dd><a href="javascript:">关羽</a></dd>
+                    </dl>
+                </li>
+                <li><span class="handle"></span>
+                    <dl>
+                        <dd><a href="javascript:">张飞</a></dd>
+                        <dd><a href="javascript:">赵云</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div style="width:400px;float:left">
+        <div class="draglist" style="border:1px solid #ddd;">
+            <ul class="ul-draglist" style="min-height:300px">
+                <li><span class="handle"></span><a href="javascript:">刘备</a></li>
+                <li><span class="handle"></span><a href="javascript:">关羽</a></li>
+                <li><span class="handle"></span><a href="javascript:">张飞</a></li>
+                <li><span class="handle"></span><a href="javascript:">赵云</a></li>
+            </ul>
+        </div>
+    </div>
+    <div style="width:400px;float:left">
+        <div class="draglist" style="border:1px solid #ddd;">
+            <ul class="ul-draglist" style="min-height:300px">
+                <li><span class="handle"></span><a href="javascript:">曹操</a></li>
+                <li><span class="handle"></span><a href="javascript:">郭嘉</a></li>
+                <li><span class="handle"></span><a href="javascript:">贾诩</a></li>
+                <li><span class="handle"></span><a href="javascript:">荀彧</a></li>
+            </ul>
+        </div>
     </div>
 </div>
-
+<div style="clear:both"></div>
 <div id="debug" style="color:#f00"></div>
 
-
-<div style="margin:10px">
-    <input id="inputItemName2" type="text" placeholder="请输入项名称" />
-    <button onclick="AddItem_OnClick()">添加一个项</button>
-    <div class="draglist wlist">
-        <h2>水平排序</h2>
-        <ul id="ulDragList2" class="ul-draglist">
-            <li><a href="javascript:">左侧列表项一</a></li>
-            <li><a href="javascript:">左侧列表项二</a></li>
-            <li><a href="javascript:">左侧列表项三</a></li>
-            <li><a href="javascript:">左侧列表项四</a></li>
-        </ul>
-    </div>
-</div>
 
 
 <script type="text/javascript">
@@ -58,7 +89,7 @@
             $dragList:null,      //拖动元素外层DIV
             $dragElement:null,   //拖动元素
             $dropElements:null,  //放下元素的DIV集合
-            direction:"vertical",      //元素排列方向 [vertical:只判断垂直, horizontal:只判断水平, all:都判断]
+            direction:"vertical",      //元素排列方向 [vertical:只判断垂直, horizontal:只判断水平, all:都判断, vertical-cross:垂直，从一个到另一个]
             startX:0,            //鼠标点击初始X值
             startY:0,            //鼠标点击初始Y值
             offsetX:0,           //鼠标坐标与元素的偏移
@@ -67,10 +98,18 @@
             $blankElement:false,  //元素的占位副本
            // isMoveFirst:false,        //是否移动到首项标识
             oldX:0,              //上一次移动的X
-            oldY:0              //上一次移动的Y  根据拖动的方向(上下左右)，给出合适的移动方法
+            oldY:0,              //上一次移动的Y  根据拖动的方向(上下左右)，给出合适的移动方法
+            handle:''            //手柄选择器，默认为空
         };
 
         dragEntity.$dragList = $(this);
+
+        //每组拖放DIV初始化一个随机ID
+        dragEntity.$dragList.each(function(){
+            $(this).data("dragDivId","dragDiv_" + Math.ceil(Math.random() * 1000));
+        })
+
+
 
         dragEntity = $.extend(dragEntity, options);
 
@@ -138,7 +177,7 @@
                     //宽度相等情况判断
                     return true;
                 }
-            }else if ("all" == direction){
+            }else{
                 return isRECTIntersect(rect1,rect2,"vertical") && isRECTIntersect(rect1,rect2,"horizontal");
             }
             return false;
@@ -146,9 +185,14 @@
 
 
 
-        dragEntity.$dragList.on("mousedown", dragEntity.selector, function(e){
+        dragEntity.$dragList.on("mousedown",dragEntity.selector + " " + dragEntity.handle, function(e){
 
-            dragEntity.$dragElement = $(this);  //当前欲拖动的元素
+            if ("" != dragEntity.handle){
+                dragEntity.$dragElement = $(this).parent();  //当前欲拖动的元素
+            }else{
+                dragEntity.$dragElement = $(this);  //当前欲拖动的元素
+            }
+
             dragEntity.$dropElements = dragEntity.$dragList.find(dragEntity.selector);  //当前组所有能拖动的元素
 
             //复制占位副本
@@ -175,7 +219,7 @@
 
         $(document).on("mousemove",function(e){
 
-            //var debugStr = "";
+            var debugStr = "";
 
             if (dragEntity.isActive){
                 var toX = e.pageX - dragEntity.startX;// + dragEntity.offsetX; //移动到鼠标坐标位置（- 相对位置偏移）
@@ -192,7 +236,7 @@
                     y2:offset.top + dragEntity.$dragElement.height()
                 }
 
-                //debugStr += "当前拖动："  + Math.ceil(RECT.y1) + "," + Math.ceil(RECT.y2);
+                debugStr += "当前拖动："  + Math.ceil(RECT.y1) + "," + Math.ceil(RECT.y2);
 
                 var $currentDropElement = null;
                 var minTop = 9999;//最小top
@@ -219,7 +263,7 @@
                             y2:dropOffset.top + $this.height()
                         };
 
-                        //debugStr += "<br />" + $this.text() + "："  + Math.ceil(dropRECT.y1) + "," + Math.ceil(dropRECT.y2);
+                        debugStr += "<br />" + $this.text() + "："  + Math.ceil(dropRECT.y1) + "," + Math.ceil(dropRECT.y2);
                         if (minTop > dropRECT.y1){
                             minTop = dropRECT.y1;
                         }
@@ -254,8 +298,8 @@
 
                     //找到相交，拟移动至相应处
                 if ($currentDropElement){
-                    console.log(dragEntity.direction);
-                    console.log(moveHDirection);
+                    //console.log(dragEntity.direction);
+                    //console.log(moveHDirection);
 
                     if ("vertical" == dragEntity.direction){
                         if ("down" == moveVDirection){
@@ -269,6 +313,12 @@
                         }else if ("left" == moveHDirection){
                             $currentDropElement.before(dragEntity.$blankElement);
                         }
+                    }else if ("vertical-cross" == dragEntity.direction){
+                        if ("down" == moveVDirection){
+                            $currentDropElement.after(dragEntity.$blankElement);
+                        }else if ("up" == moveVDirection){
+                            $currentDropElement.before(dragEntity.$blankElement);
+                        }
                     }else if ("all" == dragEntity.direction){
                         if ("right" == moveHDirection){
                             $currentDropElement.after(dragEntity.$blankElement);
@@ -277,6 +327,36 @@
                         }
                     }
 
+                }
+
+
+                //当跨DIV时,若上面未成功判断相交，则直接移动到所在DIV
+                if (null == $currentDropElement) {
+                    $("#debug").html(debugStr);
+                    if ("vertical-cross" == dragEntity.direction){
+                        dragEntity.$dragList.each(function (i) {
+                            var $this = $(this);
+                            var divOffset = $this.offset();
+                            var divRECT = {
+                                x1: divOffset.left,
+                                y1: divOffset.top,
+                                x2: divOffset.left + $this.width(),
+                                y2: divOffset.top + $this.height()
+                            };
+                            if (isRECTIntersect(RECT,divRECT,dragEntity.direction)){
+                                //若欲移动的并非这个DIV，则移动到这个DIV
+                                if (!($this.data("dragDivId") == dragEntity.$blankElement.parent().data("dragDivId"))){
+                                    $this.append(dragEntity.$blankElement);
+                                }else{
+                                    console.log("it work");
+                                }
+
+                            }
+                        })
+                    }
+                }else{
+
+                    $("#debug").html("");
                 }
 
 
@@ -310,8 +390,11 @@
 
     };
 
-    var dragList = $("#ulDragList");    //放下接收的 li 元素的 DIV
-    var dragListOpt = {};
+    var dragList = $(".ul-draglist");    //放下接收的 li 元素的 DIV
+    var dragListOpt = {
+        direction:"vertical-cross",
+        handle:".handle"
+    };
     $(dragList).DragElement(dragListOpt);
 
     var itemNumber = 0;
@@ -320,13 +403,10 @@
         if (!itemName){
             itemName = "项目列表" + itemNumber++;
         }
-        $("#ulDragList").append('<li><a href="javascript:">' + itemName + '</a></li>');
+        $("#ulDragList").append('<li><span class="handle"></span><a href="javascript:">' + itemName + '</a></li>');
+        alert(1);
     }
 
-    $("#ulDragList2").DragElement({
-        //direction:"horizontal"
-        direction:"all"
-    });
 
 </script>
 
