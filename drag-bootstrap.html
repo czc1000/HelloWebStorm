@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>拖动演示</title>
+    <script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="js/myfunctions.js" type="text/javascript"></script>
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        body,ul,li,table,td,div,dl,dd,dt,span,em {list-style:none;padding:0;margin:0}
+        .draglist {width:200px}
+        .draglist ul li {border:1px solid #ddd;text-align:center;margin:-1px -1px 0 -1px;background-color:#fff;width:200px;padding:10px 0;line-height:35px}
+        /*.draglist ul li:hover {border-color:#f00;position:relative;z-index:99}*/
+        .draglist ul li .handle {float:left;width:10px;height:35px;margin:-11px 0 0 -11px;background-color:#f0f0f3;cursor:move;}
+        .draglist ul li .handle:hover {background-color:#e0e0e3}
+        .blank-element {opacity:0.2}
+        .wlist {width:auto;}
+        .wlist ul li {float:left;width:auto;margin:10px;padding:10px 20px}
+        .wlist ul li .handle {margin-left:-31px;}
+
+        .drag-list {width:300px;background-color:#f6f6f6}
+        .drag-list li {width:280px}
+        .drag-list .handle {cursor:move;height:42px;width:10px;background-color:#f0f0f3;position:absolute;left:0;top:0}
+        .drag-list .handle:hover {background-color:#DDEEF7;}
+    </style>
+</head>
+<body>
+
+<div style="margin:10px">
+    <h2>左右拖动</h2>
+    <div style="width:300px;float:left">
+        <ul class="list-group drag-list dl_a"style="padding:10px;min-height:300px">
+            <li class="list-group-item"><span class="handle"></span>Cras justo odio</li>
+            <li class="list-group-item"><span class="handle"></span>Dapibus ac facilisis in</li>
+            <li class="list-group-item"><span class="handle"></span>Morbi leo risus</li>
+            <li class="list-group-item"><span class="handle"></span>Porta ac consectetur ac</li>
+            <li class="list-group-item"><span class="handle"></span>Vestibulum at eros</li>
+        </ul>
+    </div>
+    <div style="width:300px;float:left;margin-left:20px">
+        <ul class="list-group drag-list dl_a" style="padding:10px;min-height:300px">
+            <li class="list-group-item"><span class="handle"></span>Cras justo odio</li>
+            <li class="list-group-item"><span class="handle"></span>Dapibus ac facilisis in</li>
+            <li class="list-group-item"><span class="handle"></span>Morbi leo risus</li>
+            <li class="list-group-item"><span class="handle"></span>Porta ac consectetur ac</li>
+            <li class="list-group-item"><span class="handle"></span>Vestibulum at eros</li>
+        </ul>
+    </div>
+</div>
+
+<div style="clear:both"></div>
+
+<div style="margin:10px">
+    <h2>从左边复制到右边</h2>
+    <div style="width:300px;float:left">
+        <ul id="divDragSrcID" class="list-group drag-list dl_b" style="padding:10px;min-height:300px">
+            <li class="list-group-item"><span class="handle"></span>Cras justo odio</li>
+            <li class="list-group-item"><span class="handle"></span>Dapibus ac facilisis in</li>
+            <li class="list-group-item"><span class="handle"></span>Morbi leo risus</li>
+            <li class="list-group-item"><span class="handle"></span>Porta ac consectetur ac</li>
+            <li class="list-group-item"><span class="handle"></span>Vestibulum at eros</li>
+        </ul>
+    </div>
+    <div style="width:300px;float:left;margin-left:20px">
+        <ul class="list-group drag-list dl_b" style="padding:10px;min-height:300px">
+            <li class="list-group-item"><span class="handle"></span>Cras justo odio</li>
+            <li class="list-group-item"><span class="handle"></span>Dapibus ac facilisis in</li>
+            <li class="list-group-item"><span class="handle"></span>Morbi leo risus</li>
+            <li class="list-group-item"><span class="handle"></span>Porta ac consectetur ac</li>
+            <li class="list-group-item"><span class="handle"></span>Vestibulum at eros</li>
+        </ul>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+    var dragList = $(".dl_a");    //放下接收的 li 元素的 DIV
+    var dragListOpt = {
+        direction:"vertical-cross",
+        handle:".handle"
+    };
+    $(dragList).DragElement(dragListOpt);
+
+
+    //复制模式
+    var dragList2 = $(".dl_b");    //放下接收的 li 元素的 DIV
+    var dragListOpt2 = {
+        direction:"vertical-cross",
+        handle:".handle",
+        isCopyMode:true,
+        copySrcDivId:"divDragSrcID"
+    };
+    $(dragList2).DragElement(dragListOpt2);
+
+</script>
+
+
+
+
+</body>
+</html>
